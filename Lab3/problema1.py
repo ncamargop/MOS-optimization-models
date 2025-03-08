@@ -12,8 +12,8 @@ expr_second_diff = sp.diff(expr_diff, x)
 
 # Crear funciones desde las expresiones
 f = sp.lambdify(x, expr, 'numpy')
-f_first = sp.lambdify(x, expr_diff, 'numpy') # first derivative
-f_second = sp.lambdify(x, expr_second_diff, 'numpy') # second derivative
+f_first = sp.lambdify(x, expr_diff, 'numpy') # primera derivada
+f_second = sp.lambdify(x, expr_second_diff, 'numpy') # segunda derivada
 
 
 #---- Metodo Newton Raphson ----#
@@ -24,7 +24,7 @@ def newton_raphson(x0, factor_converg, tolerance=0.0001, max_iter=100):
         # Computar siguiente aproximacion:
         x_next = x_i - factor_converg * (f_first(x_i) / f_second(x_i))
         
-        # Update x and increment iteration count
+        # Siguiente iteracion:
         x_i = x_next
         i += 1
 

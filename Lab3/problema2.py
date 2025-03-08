@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 
 x = sp.symbols('x')
-expr = (3*x)**3 - (10*x)**2 - 56*x + 50
+expr = x**5 - 8*x**3 + 10*x + 6
 
 # Diferenciar 
 expr_diff = sp.diff(expr, x)
@@ -12,8 +12,8 @@ expr_second_diff = sp.diff(expr_diff, x)
 
 # Crear funciones desde las expresiones
 f = sp.lambdify(x, expr, 'numpy')
-f_first = sp.lambdify(x, expr_diff, 'numpy') # first derivative
-f_second = sp.lambdify(x, expr_second_diff, 'numpy') # second derivative
+f_first = sp.lambdify(x, expr_diff, 'numpy') # primera derivada
+f_second = sp.lambdify(x, expr_second_diff, 'numpy') # segunda derivada
 
 
 #---- Metodo Newton Raphson ----#
@@ -21,6 +21,10 @@ def newton_raphson(x0, factor_converg, tolerance=0.0001, max_iter=100):
     i = 0
     x_i = x0
     while abs(f_first(x_i)) > tolerance and i < max_iter:
+
+        if abs(f_second(x_i)) <= 0.0001: # No podemos permitir division entre 0
+            break
+
         # Computar siguiente aproximacion:
         x_next = x_i - factor_converg * (f_first(x_i) / f_second(x_i))
         
@@ -36,55 +40,46 @@ def newton_raphson(x0, factor_converg, tolerance=0.0001, max_iter=100):
 
 
 # ---- Test con diferentes puntos ----#
-puntos_intervalo = [-6, -4, -2, 0, 2, 4, 6]
+puntos_intervalo = [-3, -2, 1, 0, 1, 2, 3]
 extremos = []
 
 for x0 in puntos_intervalo:
-    # Encontrar extremo
-    punto = newton_raphson(x0, factor_converg=0.6)
-    
-    # Clasificar como min o max local
+    punto = newton_raphson(x0, factor_converg=0.6) 
     if f_second(punto) > 0:
-        minimo_bool = True
+        tipo = "min"
     else:
-        minimo_bool = False
-    
-    # Guardar resultado
-    extremos.append((punto, minimo_bool))
+        tipo = "max"
 
+    extremos.append((punto, f(punto), tipo))
+
+
+# Maximo y minimo global
+max_global = max(extremos, key=lambda x: x[1])  
+min_global = min(extremos, key=lambda x: x[1])  
 
 
 
 # ---- GRAFICO ----
 plt.figure(figsize=(8, 6))
-x_vals = np.linspace(-6, 6, 1000)
+x_vals = np.linspace(-3, 3, 1000)
 y_vals = f(x_vals)
 plt.plot(x_vals, y_vals)
 
+# extremos locales
+for x_ext, y_ext, tipo in extremos:
+    plt.plot(x_ext, y_ext, 'go', markersize=8, label=f'{tipo.capitalize()} local en x={x_ext:.4f}')
 
-extremos_unicos = []
 
-# Filtrar extremos duplicados
-for extremo, es_minimo in extremos:
-    es_duplicado = False
-    for ext_existente, i in extremos_unicos:
-        if abs(extremo - ext_existente) < 0.0001: 
-            es_duplicado = True
-            break
-    
-    if not es_duplicado:
-        extremos_unicos.append((extremo, es_minimo))
+plt.plot(max_global[0], max_global[1], 'ro', markersize=10, label=f'Max global en x={max_global[0]:.4f}')
+plt.plot(min_global[0], min_global[1], 'ro', markersize=10, label=f'Min global en x={min_global[0]:.4f}')
 
-# Graficar cada extremo 
-for extremo, es_minimo in extremos_unicos:
-    if es_minimo:
-        plt.plot(extremo, f(extremo), 'go', markersize=8, label=f'Mínimo en x = {extremo:.2f}')
-    else:
-        plt.plot(extremo, f(extremo), 'ro', markersize=8, label=f'Máximo en x = {extremo:.2f}')
 
 plt.xlabel('x')
 plt.ylabel('y')
 plt.grid(True)
 plt.legend()
-plt.savefig('Lab3/images/Problema1.png')
+plt.savefig('Lab3/images/Problema2.png')
 plt.show()
+
+
+

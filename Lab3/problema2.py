@@ -66,14 +66,21 @@ extremos_unicos = []
 
 # Filtrar extremos duplicados
 for extremo, es_minimo in extremos:
-    extremos_unicos.append((extremo, es_minimo))
+    es_duplicado = False
+    for ext_existente, i in extremos_unicos:
+        if abs(extremo - ext_existente) < 0.0001: 
+            es_duplicado = True
+            break
+    
+    if not es_duplicado:
+        extremos_unicos.append((extremo, es_minimo))
 
 # Graficar cada extremo 
 for extremo, es_minimo in extremos_unicos:
     if es_minimo:
-        plt.plot(extremo, f(extremo), 'go', markersize=8, label=f'Mínimo en x = {extremo:.10f}')
+        plt.plot(extremo, f(extremo), 'go', markersize=8, label=f'Mínimo en x = {extremo:.2f}')
     else:
-        plt.plot(extremo, f(extremo), 'ro', markersize=8, label=f'Máximo en x = {extremo:.10f}')
+        plt.plot(extremo, f(extremo), 'ro', markersize=8, label=f'Máximo en x = {extremo:.2f}')
 
 plt.xlabel('x')
 plt.ylabel('y')

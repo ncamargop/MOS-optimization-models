@@ -68,7 +68,7 @@ extremos_unicos = []
 for extremo, es_minimo in extremos:
     es_duplicado = False
     for ext_existente, i in extremos_unicos:
-        if abs(extremo - ext_existente) < 0.00001: 
+        if abs(extremo - ext_existente) < 0.0001: 
             es_duplicado = True
             break
     

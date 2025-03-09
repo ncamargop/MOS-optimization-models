@@ -28,7 +28,7 @@ def newton_raphson(x0, factor_converg, tolerance=0.0001, max_iter=100):
         # Computar siguiente aproximacion:
         x_next = x_i - factor_converg * (f_first(x_i) / f_second(x_i))
         
-        # Update x and increment iteration count
+        # Siguiente iteracion
         x_i = x_next
         i += 1
 
@@ -65,7 +65,7 @@ x_vals = np.linspace(-3, 3, 1000)
 y_vals = f(x_vals)
 plt.plot(x_vals, y_vals)
 
-# extremos locales
+# Extremos locales
 for x_ext, y_ext, tipo in extremos:
     plt.plot(x_ext, y_ext, 'go', markersize=8, label=f'{tipo.capitalize()} local en x={x_ext:.4f}')
 
